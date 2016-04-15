@@ -45,3 +45,25 @@ func BenchmarkMapInit1000(b *testing.B)    { benchmarkMapInit(1000, b) }
 func BenchmarkMapInit10000(b *testing.B)   { benchmarkMapInit(10000, b) }
 func BenchmarkMapInit100000(b *testing.B)  { benchmarkMapInit(100000, b) }
 func BenchmarkMapInit1000000(b *testing.B) { benchmarkMapInit(1000000, b) }
+
+func benchmarkMapReuse(size int, b *testing.B) {
+	structMap := make(map[string]struct{}, size)
+	for i := 0; i < size; i++ {
+		a := strconv.Itoa(i)
+		structMap[a] = struct{}{}
+	}
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		for k := range structMap {
+			delete(structMap, k)
+		}
+	}
+}
+
+func BenchmarkMapReuse10(b *testing.B)      { benchmarkMapReuse(10, b) }
+func BenchmarkMapReuse100(b *testing.B)     { benchmarkMapReuse(100, b) }
+func BenchmarkMapReuse1000(b *testing.B)    { benchmarkMapReuse(1000, b) }
+func BenchmarkMapReuse10000(b *testing.B)   { benchmarkMapReuse(10000, b) }
+func BenchmarkMapReuse100000(b *testing.B)  { benchmarkMapReuse(100000, b) }
+func BenchmarkMapReuse1000000(b *testing.B) { benchmarkMapReuse(1000000, b) }
