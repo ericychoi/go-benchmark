@@ -1,2 +1,6 @@
 # go-benchmark
-Various benchmarking done on Golangg.
+Various benchmarking done on Golang.
+
+```
+% go test -bench=BenchmarkMap
+```
