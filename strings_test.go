@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
+	"io/ioutil"
 	"strconv"
+	"strings"
 	"testing"
 )
 
@@ -45,4 +48,28 @@ func dummyFunction2(s string) {
 }
 
 func dummyFunction1(b []byte) {
+}
+
+// stringBuilder vs concatenation when number of pieces is fixed
+var numPieces = 4
+
+func BenchmarkStringsBuilder(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		var b strings.Builder
+		for i := 0; i <= numPieces; i++ {
+			// use fmt.Printf to simulate the same condition as below)
+			fmt.Fprint(&b, fmt.Sprintf("%d", i))
+		}
+		fmt.Fprint(ioutil.Discard, b.String())
+	}
+}
+
+func BenchmarkStringsConcatenate(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		var str string
+		for i := 0; i <= numPieces; i++ {
+			str = str + fmt.Sprintf("%d", i)
+		}
+		fmt.Fprint(ioutil.Discard, str)
+	}
 }
