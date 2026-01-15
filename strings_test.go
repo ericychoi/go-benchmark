@@ -73,3 +73,37 @@ func BenchmarkStringsConcatenate(b *testing.B) {
 		fmt.Fprint(ioutil.Discard, str)
 	}
 }
+
+// Bitflags vs string comparison for type checking
+const (
+	StatusPending   = 1 << 0
+	StatusProcessed = 1 << 1
+	StatusFailed    = 1 << 2
+	StatusCompleted = 1 << 3
+)
+
+func BenchmarkStringComparison(b *testing.B) {
+	statuses := []string{"pending", "processed", "failed", "completed", "pending", "processed"}
+	var count int
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		status := statuses[i%len(statuses)]
+		if status == "processed" || status == "completed" {
+			count++
+		}
+	}
+	_ = count
+}
+
+func BenchmarkBitflagComparison(b *testing.B) {
+	statuses := []uint8{StatusPending, StatusProcessed, StatusFailed, StatusCompleted, StatusPending, StatusProcessed}
+	var count int
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		status := statuses[i%len(statuses)]
+		if status&(StatusProcessed|StatusCompleted) != 0 {
+			count++
+		}
+	}
+	_ = count
+}
